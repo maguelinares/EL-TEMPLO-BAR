@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>El Templo Tapas</title>
+<link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.cdnfonts.com/css/old-english-text-mt" rel="stylesheet"/>
+<style>
+  :root {
+    --teal: #1a6b6b;
+    --teal-dark: #0d4a4a;
+    --teal-light: #2a8a8a;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #f5f0e8;
+    --cream-dark: #ede5d0;
+    --text-dark: #1a1a1a;
+    --text-mid: #3a3a3a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* ── LANGUAGE SWITCHER ── */
+  .lang-bar {
+    background: var(--teal-dark);
+    padding: 8px 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .lang-btn {
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold-light);
+    font-family: 'Crimson Pro', serif;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-transform: uppercase;
+  }
+  .lang-btn:hover, .lang-btn.active {
+    background: var(--gold);
+    color: var(--teal-dark);
+    border-color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    background: linear-gradient(160deg, var(--teal-dark) 0%, var(--teal) 50%, #1d7a6a 100%);
+    padding: 52px 24px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 30%, rgba(201,168,76,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.10) 0%, transparent 50%);
+  }
+  /* Decorative wave blobs */
+  .hero-blob {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.08;
+    background: var(--gold);
+  }
+  .hero-blob-1 { width: 320px; height: 320px; top: -120px; right: -80px; }
+  .hero-blob-2 { width: 200px; height: 200px; bottom: -60px; left: -40px; }
+
+  .hero-inner { position: relative; z-index: 1; }
+
+  .logo-text {
+    font-family: 'Old English Text MT', 'Uncial Antiqua', 'UnifrakturMaguntia', cursive;
+    font-size: clamp(52px, 12vw, 100px);
+    font-weight: 400;
+    color: var(--cream);
+    letter-spacing: 2px;
+    line-height: 1;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  .logo-sub {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(14px, 3vw, 22px);
+    color: var(--gold);
+    letter-spacing: 12px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    font-weight: 400;
+  }
+  .hero-divider {
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 18px auto 0;
+  }
+  .hero-tagline {
+    color: rgba(245,240,232,0.7);
+    font-size: 16px;
+    letter-spacing: 3px;
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-wrap {
+    background: var(--teal);
+    position: sticky;
+    top: 37px;
+    z-index: 99;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-wrap::-webkit-scrollbar { display: none; }
+  .nav-tabs {
+    display: flex;
+    min-width: max-content;
+    padding: 0 16px;
+  }
+  .nav-tab {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.7);
+    padding: 14px 18px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.25s;
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .nav-tab:hover { color: var(--gold-light); }
+  .nav-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* ── SECTIONS ── */
+  .section { display: none; animation: fadeIn 0.4s ease; }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(26px, 6vw, 42px);
+    color: var(--teal-dark);
+    letter-spacing: 4px;
+    text-align: center;
+    font-weight: 700;
+  }
+  .section-subtitle {
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: 4px;
+    font-style: italic;
+  }
+  .section-rule {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 18px 0 32px;
+  }
+  .section-rule::before, .section-rule::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .section-rule span {
+    color: var(--gold);
+    font-size: 18px;
+  }
+
+  /* ── MENU ITEMS ── */
+  .menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(26,107,107,0.12);
+    gap: 12px;
+    transition: background 0.2s;
+  }
+  .menu-item:hover { background: rgba(201,168,76,0.05); }
+  .menu-item:last-child { border-bottom: none; }
+
+  .item-left { flex: 1; }
+  .item-name {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--teal-dark);
+    letter-spacing: 1px;
+    line-height: 1.3;
+  }
+  .item-name-en, .item-name-de, .item-name-sv { display: none; }
+  .item-desc {
+    font-size: 13px;
+    color: #6a6a6a;
+    font-style: italic;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .item-tags {
+    display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px;
+  }
+  .tag {
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+  }
+  .tag-v  { background: rgba(60,140,60,0.12); color: #2a7a2a; border: 1px solid rgba(60,140,60,0.2); }
+  .tag-p  { background: rgba(26,107,107,0.1); color: var(--teal-dark); border: 1px solid rgba(26,107,107,0.2); }
+  .tag-sp { background: rgba(200,60,60,0.1); color: #8a2020; border: 1px solid rgba(200,60,60,0.2); }
+
+  .item-price {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold);
+    white-space: nowrap;
+    min-width: 64px;
+    text-align: right;
+  }
+
+  /* ── CONTACT ── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-top: 8px;
+  }
+  .contact-card {
+    background: var(--teal-dark);
+    color: var(--cream);
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  }
+  .contact-icon { font-size: 28px; margin-bottom: 12px; }
+  .contact-label {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .contact-value {
+    font-size: 16px;
+    line-height: 1.5;
+    color: rgba(245,240,232,0.9);
+  }
+  .contact-map {
+    margin-top: 32px;
+    border: 3px solid var(--teal);
+    overflow: hidden;
+  }
+  .contact-map iframe { display: block; width: 100%; height: 280px; border: none; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--teal-dark);
+    text-align: center;
+    padding: 28px;
+    color: rgba(245,240,232,0.5);
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+  footer span { color: var(--gold); }
+
+  /* ── ALLERGEN NOTE ── */
+  .allergen-note {
+    background: rgba(26,107,107,0.08);
+    border-left: 3px solid var(--gold);
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: #555;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<!-- LANGUAGE BAR -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('es')">ES</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" onclick="setLang('de')">DE</button>
+  <button class="lang-btn" onclick="setLang('sv')">SV</button>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-inner">
+    <div class="logo-text">El Templo</div>
+    <div class="logo-sub">Tapas</div>
+    <div class="hero-divider"></div>
+    <div class="hero-tagline" id="hero-tagline">Cocina española de autor · Madrid</div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-wrap">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('sugerencias',this)" data-es="Sugerencias" data-en="Specialties" data-de="Empfehlungen" data-sv="Specialiteter">Sugerencias</button>
+    <button class="nav-tab" onclick="showSection('entrantes',this)" data-es="Entrantes" data-en="Starters" data-de="Vorspeisen" data-sv="Förrätter">Entrantes</button>
+    <button class="nav-tab" onclick="showSection('roscas',this)" data-es="Roscas" data-en="Roscas" data-de="Roscas" data-sv="Roscas">Roscas</button>
+    <button class="nav-tab" onclick="showSection('pescados',this)" data-es="Pescados" data-en="Fish" data-de="Fisch" data-sv="Fisk">Pescados</button>
+    <button class="nav-tab" onclick="showSection('carnes',this)" data-es="Carnes" data-en="Meats" data-de="Fleisch" data-sv="Kött">Carnes</button>
+    <button class="nav-tab" onclick="showSection('postres',this)" data-es="Postres" data-en="Desserts" data-de="Nachspeisen" data-sv="Desserter">Postres</button>
+    <button class="nav-tab" onclick="showSection('bebidas',this)" data-es="Bebidas" data-en="Drinks" data-de="Getränke" data-sv="Drycker">Bebidas</button>
+    <button class="nav-tab" onclick="showSection('contacto',this)" data-es="Contacto" data-en="Contact" data-de="Kontakt" data-sv="Kontakt">Contacto</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  SUGERENCIAS                               -->
+<!-- ══════════════════════════════════════════ -->
+<section id="sugerencias" class="section active">
+  <div class="section-inner">
+    <h2 class="section-title" data-es="Sugerencias" data-en="Specialties" data-de="Empfehlungen" data-sv="Specialiteter">Sugerencias</h2>
+    <p class="section-subtitle" data-es="Nuestras recomendaciones de temporada" data-en="Our seasonal recommendations" data-de="Unsere saisonalen Empfehlungen" data-sv="Våra säsongsrekommendationer">Nuestras recomendaciones de temporada</p>
+    <div class="section-rule"><span>✦</span></div>
+    <div class="allergen-note" id="allergen-note">Consulte con nuestro personal sobre alérgenos. Los precios incluyen IVA.</div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="HUEVOS ROTOS CON JAMÓN" data-en="BROKEN EGGS WITH HAM" data-de="GEBROCHENE EIER MIT SCHINKEN" data-sv="BRUTNA ÄGG MED SKINKA">HUEVOS ROTOS CON JAMÓN</div>
+        <div class="item-desc" data-es="Broken Eggs with Ham" data-en="Free-range eggs, Iberian ham, crispy potatoes" data-de="Freilandeier, iberischer Schinken, krosse Kartoffeln" data-sv="Frilandsegg, iberisk skinka, krispiga potatisar">Broken Eggs with Ham</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">12,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="HUEVOS ROTOS CON SECRETO" data-en="BROKEN EGGS WITH IBERIAN PORK" data-de="GEBROCHENE EIER MIT IBERICHEM SCHWEINEFLEISCH" data-sv="BRUTNA ÄGG MED IBERISKT FLÄSK">HUEVOS ROTOS CON SECRETO</div>
+        <div class="item-desc" data-es="Broken Eggs with Iberian Pork" data-en="Eggs with grilled Iberian secret cut" data-de="Eier mit gegrilltem iberischen Geheimschnitt" data-sv="Ägg med grillad iberisk hemlig skärning">Broken Eggs with Iberian Pork</div>
+      </div>
+      <div class="item-price">15,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="HUEVOS ROTOS CON GULAS" data-en="BROKEN EGGS WITH ELVERS" data-de="GEBROCHENE EIER MIT GLASAALEN" data-sv="BRUTNA ÄGG MED GLASÅL">HUEVOS ROTOS CON GULAS</div>
+        <div class="item-desc" data-es="Broken Eggs Pasta Elvers" data-en="Eggs with baby eels and garlic" data-de="Eier mit Glasaalen und Knoblauch" data-sv="Ägg med glasål och vitlök">Broken Eggs Pasta Elvers</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">13,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="QUESO FRITO" data-en="FRIED CHEESE" data-de="GEBRATENER KÄSE" data-sv="FRITERAD OST">QUESO FRITO</div>
+        <div class="item-desc" data-es="Fried Cheese" data-en="Golden fried manchego with honey" data-de="Goldener frittierter Manchego mit Honig" data-sv="Gyllengräddad manchego med honung">Fried Cheese</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">11,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="MILHOJA DE MANGO Y QUESO DE CABRA" data-en="MANGO AND GOAT CHEESE MILLEFEUILLE" data-de="MANGO-ZIEGENKÄSE-MILLEFEUILLE" data-sv="MANGO OCH GETOST MILLEFEUILLE">MILHOJA DE MANGO Y QUESO DE CABRA</div>
+        <div class="item-desc" data-es="Mango and Goat Cheese Millefeuille" data-en="Layered mango, goat cheese and honey reduction" data-de="Geschichtete Mango, Ziegenkäse und Honigcreme" data-sv="Skiktad mango, getost och honungsreduktion">Mango and Goat Cheese Millefeuille</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">14,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="GAMBAS CRISTAL CON HUEVOS FRITOS" data-en="GLASS PRAWNS WITH FRIED EGGS" data-de="GLASKRABBEN MIT SPIEGELEIERN" data-sv="GLASRÄKOR MED STEKTA ÄGG">GAMBAS CRISTAL CON HUEVOS FRITOS</div>
+        <div class="item-desc" data-es="Glass Prawns with Fried Eggs" data-en="Crispy glass prawns, runny fried eggs, ali-oli" data-de="Knusprige Glaskrabben, weiche Spiegeleier, Ali-Oli" data-sv="Krispiga glasräkor, rinnande stekta ägg, ali-oli">Glass Prawns with Fried Eggs</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">15,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="BASTONCILLOS DE BERENJENAS CON MIEL" data-en="AUBERGINE STICKS WITH HONEY" data-de="AUBERGINENSTÄBCHEN MIT HONIG" data-sv="AUBERGINESTAVAR MED HONUNG">BASTONCILLOS DE BERENJENAS CON MIEL</div>
+        <div class="item-desc" data-es="Aubergines Sticks with Honey" data-en="Battered aubergine strips with cane honey" data-de="Panierte Auberginenstreifen mit Rohrzuckerhonig" data-sv="Friterade auberginestavar med rörsocker">Aubergines Sticks with Honey</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">9,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="SETAS EMPANADAS" data-en="BREADED MUSHROOMS" data-de="PANIERTE PILZE" data-sv="PANERADE SVAMPAR">SETAS EMPANADAS</div>
+        <div class="item-desc" data-es="Breaded Mushrooms" data-en="Crispy breaded wild mushrooms with garlic aioli" data-de="Knusprig panierte Wildpilze mit Knoblauch-Aioli" data-sv="Krispig panerade vilda svampar med vitlöksaioli">Breaded Mushrooms</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">12,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="CROQUETAS CASERAS" data-en="HOME-MADE CROQUETTES" data-de="HAUSGEMACHTE KROKETTEN" data-sv="HEMLAGADE KROKETTER">CROQUETAS CASERAS</div>
+        <div class="item-desc" data-es="Home-made Croquettes" data-en="Traditional béchamel croquettes with Iberian ham" data-de="Traditionelle Béchamelkroketten mit iberischem Schinken" data-sv="Traditionella béchamelkroketter med iberisk skinka">Home-made Croquettes</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">12,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="SALMOREJO" data-en="COLD TOMATO SOUP" data-de="KALTE TOMATENSUPPE" data-sv="KALL TOMATSOPPA">SALMOREJO</div>
+        <div class="item-desc" data-es="Cold Tomato Soup" data-en="Traditional Córdoba cold tomato cream with toppings" data-de="Traditionelle Córdoba-Kaltcremesuppe mit Toppings" data-sv="Traditionell kall tomatcreme från Córdoba">Cold Tomato Soup</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">7,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es='PATATA ASADA "EL TEMPLO"' data-en='ROASTED POTATO "THE TEMPLE"' data-de='GERÖSTETE KARTOFFEL "EL TEMPLO"' data-sv='ROSTAD POTATIS "EL TEMPLO"'>PATATA ASADA "EL TEMPLO"</div>
+        <div class="item-desc" data-es='Roasted Potato "The Temple"' data-en="Slow-roasted potato with our signature sauce" data-de="Langsam geröstete Kartoffel mit unserer Haussoße" data-sv="Långsamt rostad potatis med vår signaturssås">Roasted Potato "The Temple"</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">7,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="JAMÓN ASADO" data-en="ROAST HAM" data-de="GEBRATENER SCHINKEN" data-sv="ROSTAD SKINKA">JAMÓN ASADO</div>
+        <div class="item-desc" data-es="Roast Ham" data-en="Slow-roasted Iberian ham with natural juices" data-de="Langsam gebratener iberischer Schinken mit natürlichen Säften" data-sv="Långsamt rostad iberisk skinka med naturliga juicer">Roast Ham</div>
+      </div>
+      <div class="item-price">11,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="PATA DE PULPO PARRILLA" data-en="GRILLED OCTOPUS LEG" data-de="GEGRILLTES OKTOPUSBEIN" data-sv="GRILLAT BLÄCKFISKSBEN">PATA DE PULPO PARRILLA</div>
+        <div class="item-desc" data-es="Grilled Octopus Leg" data-en="Galician octopus leg, smoked paprika, potato cream" data-de="Galizisches Oktopusbein, geräucherter Paprika, Kartoffelcreme" data-sv="Galiciskt bläckfisksben, rökt paprika, potatiskräm">Grilled Octopus Leg</div>
+        <div class="item-tags"><span class="tag tag-p">Especial</span></div>
+      </div>
+      <div class="item-price">20,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="SAQUITOS DE LANGOSTINOS CON MIEL DE CAÑA" data-en="SQUITS OF PRAWNS WITH CANE HONEY" data-de="GARNELENTASCHEN MIT ROHRZUCKERHONIG" data-sv="RÄKPÅSAR MED RÖRSOCKER">SAQUITOS DE LANGOSTINOS CON MIEL DE CAÑA</div>
+        <div class="item-desc" data-es="Squits of Prawns with Cane Honey" data-en="Crispy prawn parcels with cane honey and sesame" data-de="Knusprige Garnelenpäckchen mit Rohrzuckerhonig und Sesam" data-sv="Krispiga räkpåsar med rörsocker och sesam">Squits of Prawns with Cane Honey</div>
+      </div>
+      <div class="item-price">12,00€</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  ENTRANTES                                 -->
+<!-- ══════════════════════════════════════════ -->
+<section id="entrantes" class="section">
+  <div class="section-inner">
+    <h2 class="section-title" data-es="Entrantes" data-en="Starters" data-de="Vorspeisen" data-sv="Förrätter">Entrantes</h2>
+    <p class="section-subtitle" data-es="Para empezar bien" data-en="A great start" data-de="Ein guter Anfang" data-sv="En bra start">Para empezar bien</p>
+    <div class="section-rule"><span>✦</span></div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="TABLA DE IBÉRICOS" data-en="IBERIAN COLD CUTS BOARD" data-de="IBERISCHE AUFSCHNITTTAFEL" data-sv="IBERISK CHARKBRICKA">TABLA DE IBÉRICOS</div>
+        <div class="item-desc" data-es="Selección de embutidos ibéricos de bellota" data-en="Selection of acorn-fed Iberian cold cuts" data-de="Auswahl iberischer Eichelmast-Aufschnitte" data-sv="Urval av ekollon-iberiska charkuterier">Selección de embutidos ibéricos de bellota</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">18,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="PAN CON TOMATE Y JAMÓN" data-en="BREAD WITH TOMATO AND HAM" data-de="BROT MIT TOMATE UND SCHINKEN" data-sv="BRÖD MED TOMAT OCH SKINKA">PAN CON TOMATE Y JAMÓN</div>
+        <div class="item-desc" data-es="Pan artesano tostado con tomate natural y jamón serrano" data-en="Toasted artisan bread with natural tomato and serrano ham" data-de="Getoastetes Handwerksbrot mit Naturtomate und Serranoschinken" data-sv="Rostat hantverksbröd med naturlig tomat och serranosskinka">Pan artesano tostado con tomate natural y jamón serrano</div>
+      </div>
+      <div class="item-price">8,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="GAZPACHO ANDALUZ" data-en="ANDALUSIAN GAZPACHO" data-de="ANDALUSISCHER GAZPACHO" data-sv="ANDALUSISK GAZPACHO">GAZPACHO ANDALUZ</div>
+        <div class="item-desc" data-es="Gazpacho tradicional con croutons y verduras" data-en="Traditional gazpacho with croutons and vegetables" data-de="Traditioneller Gazpacho mit Croutons und Gemüse" data-sv="Traditionell gazpacho med croutonger och grönsaker">Gazpacho tradicional con croutons y verduras</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">7,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="BOQUERONES EN VINAGRE" data-en="ANCHOVIES IN VINEGAR" data-de="ANCHOVIS IN ESSIG" data-sv="ANSJOVIS I VINÄGER">BOQUERONES EN VINAGRE</div>
+        <div class="item-desc" data-es="Boquerones marinados con ajo y perejil fresco" data-en="Marinated anchovies with garlic and fresh parsley" data-de="Marinierte Anchovis mit Knoblauch und frischer Petersilie" data-sv="Marinerade ansjovis med vitlök och färsk persilja">Boquerones marinados con ajo y perejil fresco</div>
+      </div>
+      <div class="item-price">9,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="PATATAS BRAVAS EL TEMPLO" data-en="EL TEMPLO SPICY POTATOES" data-de="EL TEMPLO SCHARFE KARTOFFELN" data-sv="EL TEMPLO STARKA POTATISAR">PATATAS BRAVAS EL TEMPLO</div>
+        <div class="item-desc" data-es="Patatas fritas con salsa brava y alioli casero" data-en="Fried potatoes with spicy sauce and homemade aioli" data-de="Frittierte Kartoffeln mit scharfer Soße und hausgemachtem Aioli" data-sv="Stekta potatisar med stark sås och hemlagad aioli">Patatas fritas con salsa brava y alioli casero</div>
+        <div class="item-tags"><span class="tag tag-sp">Picante</span><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">7,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="BURRATA CON PISTO" data-en="BURRATA WITH RATATOUILLE" data-de="BURRATA MIT RATATOUILLE" data-sv="BURRATA MED RATATOUILLE">BURRATA CON PISTO</div>
+        <div class="item-desc" data-es="Burrata cremosa con pisto manchego y albahaca fresca" data-en="Creamy burrata with La Mancha ratatouille and fresh basil" data-de="Cremige Burrata mit La Mancha Ratatouille und frischem Basilikum" data-sv="Krämig burrata med La Mancha ratatouille och färsk basilika">Burrata cremosa con pisto manchego y albahaca fresca</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">13,00€</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  ROSCAS                                    -->
+<!-- ══════════════════════════════════════════ -->
+<section id="roscas" class="section">
+  <div class="section-inner">
+    <h2 class="section-title" data-es="Roscas" data-en="Roscas" data-de="Roscas" data-sv="Roscas">Roscas</h2>
+    <p class="section-subtitle" data-es="Nuestro pan artesano de autor" data-en="Our signature artisan bread" data-de="Unser Handwerksbrot der Extraklasse" data-sv="Vårt signatur hantverksbröd">Nuestro pan artesano de autor</p>
+    <div class="section-rule"><span>✦</span></div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="ROSCA DE JAMÓN IBÉRICO" data-en="IBERIAN HAM ROSCA" data-de="IBERISCHER SCHINKEN ROSCA" data-sv="IBERISK SKINKA ROSCA">ROSCA DE JAMÓN IBÉRICO</div>
+        <div class="item-desc" data-es="Pan artesano con jamón ibérico, rúcula y aceite virgen extra" data-en="Artisan bread with Iberian ham, rocket and extra virgin oil" data-de="Handwerksbrot mit iberischem Schinken, Rucola und nativem Olivenöl extra" data-sv="Hantverksbröd med iberisk skinka, ruccola och extra jungfruolja">Pan artesano con jamón ibérico, rúcula y aceite virgen extra</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">10,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="ROSCA DE LANGOSTINOS" data-en="PRAWN ROSCA" data-de="GARNELEN ROSCA" data-sv="RÄKOR ROSCA">ROSCA DE LANGOSTINOS</div>
+        <div class="item-desc" data-es="Pan artesano con langostinos a la plancha, aguacate y sriracha" data-en="Artisan bread with grilled prawns, avocado and sriracha" data-de="Handwerksbrot mit gegrillten Garnelen, Avocado und Sriracha" data-sv="Hantverksbröd med grillad räkor, avokado och sriracha">Pan artesano con langostinos a la plancha, aguacate y sriracha</div>
+      </div>
+      <div class="item-price">12,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="ROSCA VEGETAL" data-en="VEGETABLE ROSCA" data-de="VEGETARISCHE ROSCA" data-sv="VEGETARISK ROSCA">ROSCA VEGETAL</div>
+        <div class="item-desc" data-es="Pan artesano con pisto, queso de cabra y reducción de módena" data-en="Artisan bread with ratatouille, goat cheese and balsamic reduction" data-de="Handwerksbrot mit Ratatouille, Ziegenkäse und Balsamicoreduktion" data-sv="Hantverksbröd med ratatouille, getost och balsamvinägerreduktion">Pan artesano con pisto, queso de cabra y reducción de módena</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">9,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="ROSCA DE SOLOMILLO" data-en="SIRLOIN ROSCA" data-de="LENDENSTÜCK ROSCA" data-sv="FILÉ ROSCA">ROSCA DE SOLOMILLO</div>
+        <div class="item-desc" data-es="Pan artesano con solomillo ibérico, cebolla caramelizada y mostaza antigua" data-en="Artisan bread with Iberian sirloin, caramelised onion and grain mustard" data-de="Handwerksbrot mit iberischem Lendenstück, karamellisierten Zwiebeln und Körnermustard" data-sv="Hantverksbröd med iberisk filé, karamelliserad lök och kornsenap">Pan artesano con solomillo ibérico, cebolla caramelizada y mostaza antigua</div>
+        <div class="item-tags"><span class="tag tag-p">Especial</span></div>
+      </div>
+      <div class="item-price">14,00€</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  PESCADOS                                  -->
+<!-- ══════════════════════════════════════════ -->
+<section id="pescados" class="section">
+  <div class="section-inner">
+    <h2 class="section-title" data-es="Pescados" data-en="Fish" data-de="Fisch" data-sv="Fisk">Pescados</h2>
+    <p class="section-subtitle" data-es="Del mar a tu mesa" data-en="From the sea to your table" data-de="Vom Meer auf Ihren Tisch" data-sv="Från havet till ditt bord">Del mar a tu mesa</p>
+    <div class="section-rule"><span>✦</span></div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="BACALAO AL PIL PIL" data-en="SALT COD PIL PIL" data-de="KABELJAU PIL PIL" data-sv="SALTAD TORSK PIL PIL">BACALAO AL PIL PIL</div>
+        <div class="item-desc" data-es="Bacalao confitado con salsa pil pil tradicional vasca" data-en="Confit cod with traditional Basque pil pil sauce" data-de="Konfierter Kabeljau mit traditioneller baskischer Pil-Pil-Soße" data-sv="Konfiterad torsk med traditionell baskisk pil pil-sås">Bacalao confitado con salsa pil pil tradicional vasca</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">18,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="GAMBAS AL AJILLO" data-en="GARLIC PRAWNS" data-de="KNOBLAUCHGARNELEN" data-sv="VITLÖKSRÄKOR">GAMBAS AL AJILLO</div>
+        <div class="item-desc" data-es="Gambas frescas salteadas con ajo, guindilla y aceite de oliva" data-en="Fresh prawns sautéed with garlic, chilli and olive oil" data-de="Frische Garnelen mit Knoblauch, Chili und Olivenöl angebraten" data-sv="Färska räkor sauterade med vitlök, chili och olivolja">Gambas frescas salteadas con ajo, guindilla y aceite de oliva</div>
+        <div class="item-tags"><span class="tag tag-sp">Picante</span></div>
+      </div>
+      <div class="item-price">16,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="LUBINA A LA SAL" data-en="SEA BASS IN SALT CRUST" data-de="WOLFSBARSCH IN SALZKRUSTE" data-sv="HAVSABBORRE I SALTSKORPA">LUBINA A LA SAL</div>
+        <div class="item-desc" data-es="Lubina entera horneada en costra de sal con verduras de temporada" data-en="Whole sea bass baked in salt crust with seasonal vegetables" data-de="Ganzer Wolfsbarsch in Salzkruste gebacken mit Saisongemüse" data-sv="Hel havsabborre bakad i saltskorpa med säsonggrönsaker">Lubina entera horneada en costra de sal con verduras de temporada</div>
+        <div class="item-tags"><span class="tag tag-p">Especial</span></div>
+      </div>
+      <div class="item-price">24,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="CALAMARES A LA ROMANA" data-en="ROMAN-STYLE SQUID" data-de="TINTENFISCH RÖMISCHER ART" data-sv="BLÄCKFISK PÅ ROMARVIS">CALAMARES A LA ROMANA</div>
+        <div class="item-desc" data-es="Calamares frescos rebozados con alioli y limón" data-en="Fresh squid rings in batter with aioli and lemon" data-de="Frische Tintenfischringe im Teigmantel mit Aioli und Zitrone" data-sv="Färska bläckfisksringar i smet med aioli och citron">Calamares frescos rebozados con alioli y limón</div>
+      </div>
+      <div class="item-price">13,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="VIEIRAS GRATINADAS" data-en="GRATIN SCALLOPS" data-de="GRATINIERTE JAKOBSMUSCHELN" data-sv="GRATINERADE PILGRIMSMUSSLOR">VIEIRAS GRATINADAS</div>
+        <div class="item-desc" data-es="Vieiras gratinadas con mantequilla de hierbas y pan rallado" data-en="Scallops gratin with herb butter and breadcrumbs" data-de="Jakobsmuscheln gratiniert mit Kräuterbutter und Semmelbrösel" data-sv="Pilgrimsmusslor gratinerade med örtsmör och ströbröd">Vieiras gratinadas con mantequilla de hierbas y pan rallado</div>
+        <div class="item-tags"><span class="tag tag-p">Especial</span></div>
+      </div>
+      <div class="item-price">22,00€</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  CARNES                                    -->
+<!-- ══════════════════════════════════════════ -->
+<section id="carnes" class="section">
+  <div class="section-inner">
+    <h2 class="section-title" data-es="Carnes" data-en="Meats" data-de="Fleisch" data-sv="Kött">Carnes</h2>
+    <p class="section-subtitle" data-es="Selección de carnes a la brasa" data-en="Selection of grilled meats" data-de="Auswahl gegrillter Fleischgerichte" data-sv="Urval av grillat kött">Selección de carnes a la brasa</p>
+    <div class="section-rule"><span>✦</span></div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="SOLOMILLO DE TERNERA" data-en="VEAL TENDERLOIN" data-de="KALBSLENDENSTÜCK" data-sv="KALVFILÉ">SOLOMILLO DE TERNERA</div>
+        <div class="item-desc" data-es="Solomillo de ternera a la brasa con patatas y salsa de vino tinto" data-en="Grilled veal tenderloin with potatoes and red wine sauce" data-de="Gegrilltes Kalbslendenstück mit Kartoffeln und Rotweinsoße" data-sv="Grillad kalvfilé med potatis och rödvinssås">Solomillo de ternera a la brasa con patatas y salsa de vino tinto</div>
+        <div class="item-tags"><span class="tag tag-p">Especial</span></div>
+      </div>
+      <div class="item-price">26,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="SECRETO IBÉRICO A LA BRASA" data-en="GRILLED IBERIAN SECRET" data-de="GEGRILLTES IBERISCHES GEHEIMSTÜCK" data-sv="GRILLAD IBERISK HEMLIG SKÄRNING">SECRETO IBÉRICO A LA BRASA</div>
+        <div class="item-desc" data-es="Corte secreto ibérico a la brasa con chimichurri y patatas fritas" data-en="Grilled Iberian secret cut with chimichurri and fried potatoes" data-de="Gegrillter iberischer Geheimschnitt mit Chimichurri und Pommes" data-sv="Grillad iberisk hemlig skärning med chimichurri och pommes">Corte secreto ibérico a la brasa con chimichurri y patatas fritas</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">19,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="CARRILLERAS AL VINO TINTO" data-en="CHEEKS IN RED WINE" data-de="WANGEN IN ROTWEIN" data-sv="KIND I RÖDVIN">CARRILLERAS AL VINO TINTO</div>
+        <div class="item-desc" data-es="Carrilleras de cerdo ibérico estofadas en vino tinto con puré" data-en="Iberian pork cheeks braised in red wine with mashed potato" data-de="Iberische Schweinebacken in Rotwein geschmort mit Kartoffelpüree" data-sv="Iberiska fläskkinder braiserade i rödvin med potatispuré">Carrilleras de cerdo ibérico estofadas en vino tinto con puré</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">17,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="POLLO DE CORRAL AL HORNO" data-en="ROAST FREE-RANGE CHICKEN" data-de="GEBRATENES FREILANDHUHN" data-sv="UGNSROSTAD FRIGÅENDE KYCKLING">POLLO DE CORRAL AL HORNO</div>
+        <div class="item-desc" data-es="Medio pollo de corral al horno con verduras asadas y limón" data-en="Half free-range roast chicken with roasted vegetables and lemon" data-de="Halbes Freilandhuhn aus dem Ofen mit geröstetem Gemüse und Zitrone" data-sv="Halv ugnsrostad frigående kyckling med rostade grönsaker och citron">Medio pollo de corral al horno con verduras asadas y limón</div>
+      </div>
+      <div class="item-price">16,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="CHULETÓN DE BUEY" data-en="OX RIB STEAK" data-de="OCHSENRIPPENSTEAK" data-sv="OXREV BIFF">CHULETÓN DE BUEY</div>
+        <div class="item-desc" data-es="Chuletón de buey madurado 45 días, sal maldon y aceite de oliva · precio por 100g" data-en="45-day dry-aged ox rib steak, Maldon salt and olive oil · price per 100g" data-de="45 Tage trockengereifte Ochsenrippe, Maldonsalz und Olivenöl · Preis pro 100g" data-sv="45-dagars torrlagrad oxrev, Maldonsalt och olivolja · pris per 100g">Chuletón de buey madurado 45 días, sal maldon y aceite de oliva · precio por 100g</div>
+        <div class="item-tags"><span class="tag tag-p">Especial</span></div>
+      </div>
+      <div class="item-price">9,50€</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  POSTRES                                   -->
+<!-- ══════════════════════════════════════════ -->
+<section id="postres" class="section">
+  <div class="section-inner">
+    <h2 class="section-title" data-es="Postres" data-en="Desserts" data-de="Nachspeisen" data-sv="Desserter">Postres</h2>
+    <p class="section-subtitle" data-es="El dulce final" data-en="The sweet finale" data-de="Das süße Finale" data-sv="Den söta finalen">El dulce final</p>
+    <div class="section-rule"><span>✦</span></div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="TARTA DE QUESO AL HORNO" data-en="BAKED CHEESECAKE" data-de="GEBACKENER KÄSEKUCHEN" data-sv="BAKAD CHEESECAKE">TARTA DE QUESO AL HORNO</div>
+        <div class="item-desc" data-es="Tarta de queso cremosa estilo San Sebastián con coulis de frutos rojos" data-en="Creamy San Sebastián-style cheesecake with berry coulis" data-de="Cremiger Käsekuchen im San-Sebastián-Stil mit Beerencoulis" data-sv="Krämig cheesecake i San Sebastián-stil med bärcoulis">Tarta de queso cremosa estilo San Sebastián con coulis de frutos rojos</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">7,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="COULANT DE CHOCOLATE" data-en="CHOCOLATE FONDANT" data-de="SCHOKOLADENFONDANT" data-sv="CHOKLADFONDANT">COULANT DE CHOCOLATE</div>
+        <div class="item-desc" data-es="Bizcocho de chocolate con corazón fundido y helado de vainilla" data-en="Chocolate cake with molten centre and vanilla ice cream" data-de="Schokoladenkuchen mit flüssigem Kern und Vanilleeis" data-sv="Chokladkaka med flytande kärna och vaniljglass">Bizcocho de chocolate con corazón fundido y helado de vainilla</div>
+      </div>
+      <div class="item-price">7,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="CREMA CATALANA" data-en="CATALAN CREAM" data-de="KATALANISCHE CREME" data-sv="KATALANSK KRÄM">CREMA CATALANA</div>
+        <div class="item-desc" data-es="Crema catalana tradicional con azúcar quemado y canela" data-en="Traditional Catalan cream with burnt sugar and cinnamon" data-de="Traditionelle katalanische Creme mit gebranntem Zucker und Zimt" data-sv="Traditionell katalansk kräm med bränt socker och kanel">Crema catalana tradicional con azúcar quemado y canela</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">6,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="HELADOS ARTESANOS" data-en="ARTISAN ICE CREAMS" data-de="HANDGEMACHTES EIS" data-sv="HANTVERKSGLASS">HELADOS ARTESANOS</div>
+        <div class="item-desc" data-es="3 bolas a elegir: vainilla, chocolate, fresa, pistacho, turrón" data-en="3 scoops to choose: vanilla, chocolate, strawberry, pistachio, nougat" data-de="3 Kugeln wählen: Vanille, Schokolade, Erdbeere, Pistazie, Nougat" data-sv="3 kulor att välja: vanilj, choklad, jordgubbe, pistage, nougat">3 bolas a elegir: vainilla, chocolate, fresa, pistacho, turrón</div>
+        <div class="item-tags"><span class="tag tag-v">Vegetariano</span></div>
+      </div>
+      <div class="item-price">5,50€</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  BEBIDAS                                   -->
+<!-- ══════════════════════════════════════════ -->
+<section id="bebidas" class="section">
+  <div class="section-inner">
+    <h2 class="section-title" data-es="Bebidas" data-en="Drinks" data-de="Getränke" data-sv="Drycker">Bebidas</h2>
+    <p class="section-subtitle" data-es="Vinos, cervezas y más" data-en="Wines, beers and more" data-de="Weine, Biere und mehr" data-sv="Viner, öl och mer">Vinos, cervezas y más</p>
+    <div class="section-rule"><span>✦</span></div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="VINO DE LA CASA · Copa" data-en="HOUSE WINE · Glass" data-de="HAUSWEIN · Glas" data-sv="HUSETS VIN · Glas">VINO DE LA CASA · Copa</div>
+        <div class="item-desc" data-es="Tinto, blanco o rosado" data-en="Red, white or rosé" data-de="Rot, Weiß oder Rosé" data-sv="Rött, vitt eller rosé">Tinto, blanco o rosado</div>
+      </div>
+      <div class="item-price">3,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="CERVEZA ARTESANA" data-en="CRAFT BEER" data-de="HANDWERKSBIER" data-sv="HANTVERKSÖL">CERVEZA ARTESANA</div>
+        <div class="item-desc" data-es="Selección de cervezas artesanas locales · 33cl" data-en="Selection of local craft beers · 33cl" data-de="Auswahl lokaler Handwerksbrauereien · 33cl" data-sv="Urval av lokala hantverksbryggerier · 33cl">Selección de cervezas artesanas locales · 33cl</div>
+      </div>
+      <div class="item-price">4,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="SANGRÍA DE LA CASA · Jarra" data-en="HOUSE SANGRIA · Jug" data-de="HAUSMACHERSANGRIA · Krug" data-sv="HUSETS SANGRIA · Kanna">SANGRÍA DE LA CASA · Jarra</div>
+        <div class="item-desc" data-es="Sangría artesanal con frutas de temporada · 1 litro" data-en="Homemade sangria with seasonal fruits · 1 litre" data-de="Hausgemachte Sangria mit Saisonobst · 1 Liter" data-sv="Hemlagad sangria med säsongsfrukt · 1 liter">Sangría artesanal con frutas de temporada · 1 litro</div>
+        <div class="item-tags"><span class="tag tag-p">Popular</span></div>
+      </div>
+      <div class="item-price">14,00€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="REFRESCO / AGUA" data-en="SOFT DRINK / WATER" data-de="SOFTDRINK / WASSER" data-sv="LÄSK / VATTEN">REFRESCO / AGUA</div>
+        <div class="item-desc" data-es="Coca-Cola, Fanta, agua con gas, agua sin gas" data-en="Coca-Cola, Fanta, sparkling water, still water" data-de="Coca-Cola, Fanta, Mineralwasser, stilles Wasser" data-sv="Coca-Cola, Fanta, läskedryck, stilla vatten">Coca-Cola, Fanta, agua con gas, agua sin gas</div>
+      </div>
+      <div class="item-price">2,50€</div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-left">
+        <div class="item-name" data-es="CAFÉ" data-en="COFFEE" data-de="KAFFEE" data-sv="KAFFE">CAFÉ</div>
+        <div class="item-desc" data-es="Espresso, cortado, con leche, americano" data-en="Espresso, cortado, latte, americano" data-de="Espresso, Cortado, Latte, Americano" data-sv="Espresso, cortado, latte, americano">Espresso, cortado, con leche, americano</div>
+      </div>
+      <div class="item-price">2,00€</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  CONTACTO                                  -->
+<!-- ══════════════════════════════════════════ -->
+<section id="contacto" class="section">
+  <div class="section-inner">
+    <h2 class="section-title" data-es="Contacto" data-en="Contact" data-de="Kontakt" data-sv="Kontakt">Contacto</h2>
+    <p class="section-subtitle" data-es="Estamos esperándote" data-en="We're waiting for you" data-de="Wir warten auf Sie" data-sv="Vi väntar på dig">Estamos esperándote</p>
+    <div class="section-rule"><span>✦</span></div>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">📍</div>
+        <div class="contact-label" data-es="Dirección" data-en="Address" data-de="Adresse" data-sv="Adress">Dirección</div>
+        <div class="contact-value">Calle Mayor, 12<br>Madrid, 28013</div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">📞</div>
+        <div class="contact-label" data-es="Teléfono" data-en="Phone" data-de="Telefon" data-sv="Telefon">Teléfono</div>
+        <div class="contact-value">+34 912 345 678</div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">🕐</div>
+        <div class="contact-label" data-es="Horario" data-en="Hours" data-de="Öffnungszeiten" data-sv="Öppettider">Horario</div>
+        <div class="contact-value" data-es="Lun–Vie: 13:00–16:00 · 20:00–24:00<br>Sáb–Dom: 13:00–01:00" data-en="Mon–Fri: 1pm–4pm · 8pm–12am<br>Sat–Sun: 1pm–1am" data-de="Mo–Fr: 13–16 · 20–24 Uhr<br>Sa–So: 13–1 Uhr" data-sv="Mån–Fre: 13–16 · 20–24<br>Lör–Sön: 13–01">Lun–Vie: 13:00–16:00 · 20:00–24:00<br>Sáb–Dom: 13:00–01:00</div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">✉️</div>
+        <div class="contact-label" data-es="Reservas" data-en="Reservations" data-de="Reservierungen" data-sv="Reservationer">Reservas</div>
+        <div class="contact-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="50393e363f10353c24353d203c3f24312031237e3523">[email&#160;protected]</a></div>
+      </div>
+    </div>
+
+    <div class="contact-map">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3037.6!2d-3.7038!3d40.4168!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDI1JzAwLjUiTiAzwrA0MicxMy43Ilc!5e0!3m2!1ses!2ses!4v1234567890"
+        allowfullscreen="" loading="lazy">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>El Templo Tapas</span> · Madrid · Todos los derechos reservados
+</footer>
+
+<script>
+  let currentLang = 'es';
+
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function setLang(lang) {
+    currentLang = lang;
+
+    // Update lang buttons
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent.toLowerCase() === lang);
+    });
+
+    // Update all elements with data-[lang] attribute
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+      const val = el.getAttribute('data-' + lang);
+      if (val) el.innerHTML = val;
+    });
+
+    // Update hero tagline
+    const taglines = {
+      es: 'Cocina española de autor · Madrid',
+      en: 'Signature Spanish cuisine · Madrid',
+      de: 'Spanische Autorenküche · Madrid',
+      sv: 'Spansk signaturmat · Madrid'
+    };
+    document.getElementById('hero-tagline').textContent = taglines[lang];
+
+    // Update allergen note
+    const allergens = {
+      es: 'Consulte con nuestro personal sobre alérgenos. Los precios incluyen IVA.',
+      en: 'Please ask our staff about allergens. Prices include VAT.',
+      de: 'Fragen Sie unser Personal zu Allergenen. Preise inkl. MwSt.',
+      sv: 'Fråga vår personal om allergener. Priser inkl. moms.'
+    };
+    const note = document.getElementById('allergen-note');
+    if (note) note.textContent = allergens[lang];
+
+    // Update nav tab labels
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      const val = tab.getAttribute('data-' + lang);
+      if (val) tab.textContent = val;
+    });
+  }
+</script>
